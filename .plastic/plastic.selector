@@ -1,0 +1,4 @@
+repository "Pilot 2025-11-19_19-50-32/Pilot@3574240740740@cloud"
+  path "/"
+    br "/main"
+    co "/main"
