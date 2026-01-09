@@ -1,106 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Unity.Netcode;
-using TMPro;
-using System;
+using UnityEngine;
 
 public class PlayerController : NetworkBehaviour
 {
-    public static PlayerController Instance;
-    public Transform MeleeAttackPoint;
-    public Transform ProjectileAttackPoint;
+    public PlayerRole role;
 
-    public TextMeshProUGUI UIText;
+    public float moveSpeed = 5f;
 
+    private Rigidbody2D rb;
+    private Vector2 moveInput;
 
-    private PlayerState mPlayerState;
-    private int mCurrentStateIndex;
-    [SerializeField]
-    private AllPlayerStates m_AllPlayerStates;
-
-    [SerializeField]
-    private MovementController m_MovementController;
-
-
-    private GameObject mCurrentWeaponGO;
-    private GameObject mCurrentWeaponGOPrefab;
-    private PlayerWeapon mCurrentWeaponx;
-
-    [SerializeField] private PlayerWeapon mCurrentWeapon;
-
-    // Start is called before the first frame update
-
-    public override void OnNetworkSpawn()
+    void Awake()
     {
-        base.OnNetworkSpawn();
-
-        ChangeState(m_AllPlayerStates.AllStates[0]);
-        mCurrentStateIndex = 1;
-        Debug.Log("state changed");
-        mPlayerState = m_AllPlayerStates.AllStates[mCurrentStateIndex];
-        NetworkUI.OnStateChanged.Invoke(OwnerClientId, "shooter");
-
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        if (!IsOwner) { return; }
-        if (Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("attack");
-            if (mPlayerState.EquipedWeapon != null)
-            {
-                switch (mCurrentWeapon.GetType()) {
-                    case WeaponType.Melee:
-                        mCurrentWeapon.StandardAttackRpc(ProjectileAttackPoint.position, transform.rotation);
-                        break;
-                    case WeaponType.Projectile:
-                        mCurrentWeapon.StandardAttackRpc(ProjectileAttackPoint.position, transform.rotation);
-                        break;
+        // Only the owning client can control this player
+        if (!IsOwner) return;
 
-                }
-            }
-        }
-        if (Input.GetKeyDown("space"))
-        {
-            /*
-            mCurrentStateIndex += 1;
-            if (mCurrentStateIndex >= m_AllPlayerStates.AllStates.Count)
-            {
-                mCurrentStateIndex = 0;
-            } 
-            ChangeState(m_AllPlayerStates.AllStates[mCurrentStateIndex]);
-            */
-        }
+        moveInput.x = Input.GetAxisRaw("Horizontal"); // A / D
+        moveInput.y = Input.GetAxisRaw("Vertical");   // W / S
+        moveInput = moveInput.normalized;
     }
 
-
-    public void ChangeState(PlayerState state)
+    void FixedUpdate()
     {
-        Destroy(mCurrentWeaponGOPrefab);
-        //UIText.text = state.StateName;
+        if (!IsOwner) return;
 
-        mPlayerState = state;
-        m_MovementController.SetSpeed(state.PlayerSpeed);
-        Physics.IgnoreLayerCollision(3, 7, mPlayerState.IsPhasable);
-
-        transform.localScale = new Vector3(1,1,1) * state.PlayerScale;
-
-        mCurrentWeaponGO = mPlayerState.EquipedWeapon;
-
-        if (mCurrentWeaponGO != null)
-        {
-            mCurrentWeapon = mCurrentWeaponGO.GetComponent<PlayerWeapon>();
-        }
-
-        if (mCurrentWeaponGO != null)
-        {
-            if (mCurrentWeapon.GetType() == WeaponType.Melee)
-            {
-                mCurrentWeaponGOPrefab = Instantiate(mCurrentWeaponGO, MeleeAttackPoint.position, transform.rotation, MeleeAttackPoint);
-            } 
-        }
+        rb.linearVelocity = moveInput * moveSpeed;
     }
+
 }
