@@ -149,8 +149,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildPlacer
   buildingPrefab: {fileID: 4884570610948793441, guid: afa6269853de11847be08c5fa734efa7, type: 3}
-  beltPrefab: {fileID: 7110503616974020978, guid: 4e4fce7e330a599409b4b5027c2181a1, type: 3}
+  beltUpPrefab: {fileID: 7110503616974020978, guid: 4e4fce7e330a599409b4b5027c2181a1, type: 3}
+  beltDownPrefab: {fileID: 7110503616974020978, guid: 9b2d66776c4b3714cb30cce231a361fe, type: 3}
+  beltLeftPrefab: {fileID: 7110503616974020978, guid: 3c5dff00a851583498482e78d73f8c86, type: 3}
+  beltRightPrefab: {fileID: 7110503616974020978, guid: aded8fa040805954fb44520af1ffb3ab, type: 3}
+  hopperPrefab: {fileID: 4884570610948793441, guid: 910cc891e759676458702749965aa60c, type: 3}
   gridSize: 1
+  mode: 0
 --- !u!4 &360443157
 Transform:
   m_ObjectHideFlags: 0
